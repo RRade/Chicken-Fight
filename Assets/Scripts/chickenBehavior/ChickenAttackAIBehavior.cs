@@ -84,7 +84,7 @@ public class ChickenAttackAIBehavior : MonoBehaviour {
 		} else  if (attackingAppeal >= evadingAppeal && attackingAppeal >= invadingAppeal) {
 			attackUpdate();
 		} else if (evadingAppeal >= attackingAppeal && evadingAppeal >= invadingAppeal) {
-			evadeUpdate();
+			evadeUpdate(currentPercept);
 		} 
 
 	}
@@ -103,8 +103,27 @@ public class ChickenAttackAIBehavior : MonoBehaviour {
 	/// If the AI has made the desicion that it wants to run away, 
 	/// it will start calling this function
 	/// </summary>
-	void evadeUpdate(){
-		control.moveBackward ();
+	void evadeUpdate(Percept percept){
+        if (Vector3.Distance(target.transform.position, control.transform.position) <= 4)
+        {
+            int choice = (int)Random.Range(0F, 3F);
+            switch (choice) {
+                case 0:
+                    control.dashBack();
+                    break;
+                case 1:
+                    control.dashLeft();
+                    break;
+                case 2:
+                    control.dashRight();
+                    break;
+                case 3:
+                    control.dashBack();
+                    break;
+            }
+        } else {
+            control.moveBackward();
+        }
 	}
 
 	/// <summary>
@@ -113,8 +132,15 @@ public class ChickenAttackAIBehavior : MonoBehaviour {
 	/// it will start calling this function
 	/// </summary>
 	void invadeUpdate(){
-		control.moveForward ();
-	}
+        if (Vector3.Distance(target.transform.position, control.transform.position) >= 10)
+        {
+            control.attackForward();
+        }
+        else
+        {
+            control.moveForward();
+        }
+    }
 
 	/// <summary>
 	/// What the apeal is to the agent for executing an attack on the target.
